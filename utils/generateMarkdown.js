@@ -1,10 +1,4 @@
-const fs = require('fs');
-
-function generateMarkdown(data) {
-  return `
-# ${data.title}
-
-`;
-}
-
-module.exports = generateMarkdown;
+let generateMarkdown = data => {
+  console.log(data)
+};
+module.exports = funcs = { generateMarkdown };

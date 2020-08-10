@@ -3,7 +3,7 @@ const generateMd = require('./utils/generateMarkdown.js');
 const fs = require('fs');
 const util = require('util');
 
-const writeFileAsync = util.promisify(fs.writeFile);
+// const writeFileAsync = util.promisify(fs.writeFile);
 const questions = [
   {
     type: 'input',
@@ -22,28 +22,25 @@ const questions = [
   },
   {
     type: 'editor',
-    message: 'Can you provide some details how your project works?? (Close the editor after saving)',
+    message: 'Can you provide some details how your project works? (Close the editor after saving)',
     name: 'usage'
-  },
-  {
-    type: 'input',
-    message: 'asdasdasd',
-    name: 'lalalal'
   }
 ];
 
-function writeToFile(fileName, data) {
-  writeFileAsync()
-}
+const init = () => {
+  console.log('Init....')
+  inquirer.prompt(questions
+  ).then(function (answers) {
+    console.log('after answers...')
+    writeToFile(answers)
+  });
+};
 
-function init() {
-  inquirer.prompt(questions).then(answers => {
-    return generateMd.generateMarkdown(answers);
-  }).then(generated => {
-    writeToFile(data)
-  }).catch(error => {
-    throw error;
-  })
-}
+const writeToFile = markedDown => {
+  // const generatedAnswer = generateMd.generateMarkdown(markedDown);
+  // const parsed = JSON.parse(generatedAnswer);
+  console.log(markedDown);
+};
+
 
 init();

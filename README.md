@@ -31,6 +31,6 @@ Mozilla Public License 2.0
 Feel free to contribute.
 
 ### Questions
-Ask me a question.
-![Github Profile](https://github.com/jeorgedonato.png?size=200)
+Ask me a question. </br>
+![Github Profile](https://github.com/jeorgedonato.png?size=200) </br>
 **https://github.com/jeorgedonato**

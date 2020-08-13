@@ -62,8 +62,8 @@ ${ this.closeBox}
 Feel free to contribute.
 
 ### Questions
-Ask me a question.
-![Github Profile](https://github.com/${this.gitUser}.png?size=200)
+Ask me a question. </br>
+![Github Profile](https://github.com/${this.gitUser}.png?size=200) </br>
 **https://github.com/${this.gitUser}**
 `;
 }

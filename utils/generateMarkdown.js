@@ -18,6 +18,9 @@ function MarkDown({ title, description, tableOfContents, installation, usage, li
   this.usage = usage;
   this.license = license;
   this.licenseVal = licObj[this.license];
+  this.openBox = '```sh';
+  this.closeBox = '```';
+  this.licStr = '';
 };
 //  = { generateMarkdown };
 
@@ -46,16 +49,33 @@ MarkDown.prototype.createToC = function () {
 MarkDown.prototype.createInsUse = function () {
   return `
 ### Installation
-
-  ${this.installation ? this.installation : '"npm install" to install dependecies'}
-
+${this.openBox}
+${this.installation ? this.installation : '"npm install" to install dependecies'}
+${this.closeBox}
 ### Usage
+${this.openBox}
+${this.usage ? this.usage : '"node index.js" to install to run the program'}
+${this.closeBox}`
+}
 
-  ${this.usage ? this.usage : '"node index.js" to install to run the program'}`
+MarkDown.prototype.createLicense = async function () {
+
+  const licData = await axios.get(`https://api.github.com/licenses/${this.licenseVal}`);
+  const { data } = await licData;
+  // console.log(name)
+  return data;
+  // return this.licStr
 }
 
 MarkDown.prototype.completeMarkD = function () {
-  return this.createTitleDesc() + this.createToC() + this.createInsUse();
+  return this.createTitleDesc() + this.createToC() + this.createInsUse() + this.createLicense().then(data => {
+    return `
+### License
+#### ${data.name}
+${this.openBox}
+${data.body}
+${this.closeBox}`
+  });
 }
 
 module.exports = MarkDown;

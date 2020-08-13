@@ -2,9 +2,20 @@ const inquirer = require('inquirer');
 const MarkDown = require('./utils/generateMarkdown.js');
 const fs = require('fs');
 const util = require('util');
+const axios = require('axios');
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const questions = [
+  {
+    type: 'input',
+    message: 'What is your Github Username?',
+    name: 'gitUser'
+  },
+  {
+    type: 'input',
+    message: "What is the project's repo?",
+    name: 'gitRepo'
+  },
   {
     type: 'input',
     message: 'What is your Project Title?',
@@ -38,16 +49,29 @@ const questions = [
   }
 ];
 
-const init = () => {
-  inquirer.prompt(questions).then(function (response) {
-    const generated = new MarkDown(response)
+const licObj = {
+  'MIT': 'mit',
+  'GNU AGPLv3': 'agpl-3.0',
+  'GNU GPLv3': 'gpl-3.0',
+  'GNU LGPLv3': 'lgpl-3.0',
+  'Mozilla Public License 2.0': 'mpl-2.0',
+  'Apache License 2.0': 'apache-2.0',
+  'The Unlicense': 'unlicense'
+};
+
+const init = async () => {
+  try {
+    const questionRes = await inquirer.prompt(questions);
+    const { license } = questionRes;
+    const licenseVal = licObj[license]
+    const axiosRes = await axios.get(`https://api.github.com/licenses/${licenseVal}`);
+    const { data: { name: licName, body: licBody } } = axiosRes;
+    const generated = new MarkDown(questionRes, licName, licBody);
     const gMarkDown = generated.completeMarkD();
-    // const generated = generateMd.generateMarkdown(response);
     writeToFile(gMarkDown);
-  }).catch(function (error) {
-    console.log(error);
-    return;
-  });
+  } catch (error) {
+    throw error;
+  }
 };
 
 const writeToFile = markedDown => {
@@ -55,8 +79,8 @@ const writeToFile = markedDown => {
   // const parsed = JSON.parse(generatedAnswer);
   // console.log(markedDown);
 
-  writeFileAsync("README-TEST.md", markedDown).then(function (err) {
-    console.log('File Written!')
+  writeFileAsync("README.md", markedDown).then(function (err) {
+    console.info('File has Successfully Written!');
   });
 };
 

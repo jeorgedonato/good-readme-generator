@@ -1,35 +1,28 @@
 const axios = require('axios');
 
-const licObj = {
-  'MIT': 'mit',
-  'GNU AGPLv3': 'agpl-3.0',
-  'GNU GPLv3': 'gpl-3.0',
-  'GNU LGPLv3': 'lgpl-3.0',
-  'Mozilla Public License 2.0': 'mpl-2.0',
-  'Apache License 2.0': 'apache-2.0',
-  'The Unlicense': 'unlicense'
-};
-
-function MarkDown({ title, description, tableOfContents, installation, usage, license }) {
+function MarkDown({ title, description, tableOfContents, installation, usage, gitUser, gitRepo }, licName, licBody) {
   this.title = title;
   this.description = description;
   this.tableOfContents = tableOfContents;
   this.installation = installation;
   this.usage = usage;
-  this.license = license;
-  this.licenseVal = licObj[this.license];
+  this.gitUser = gitUser;
+  this.gitRepo = gitRepo;
+  this.licName = licName;
+  this.licBody = licBody;
   this.openBox = '```sh';
   this.closeBox = '```';
-  this.licStr = '';
 };
 //  = { generateMarkdown };
 
 MarkDown.prototype.createTitleDesc = function () {
-  return `# ${this.title ? this.title.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') : 'Good Readme Generators'} 
+  return `# ${this.title ? this.title.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') : 'Good Readme Generator'} 
+
+![Badge](${'https://img.shields.io/github/languages/top/' + this.gitUser + '/' + this.gitRepo})
 
 ### Description
 
-${this.description ? this.description : 'A good web app'}`
+${ this.description ? this.description : 'A good web app'} `
 }
 
 MarkDown.prototype.createToC = function () {
@@ -49,33 +42,38 @@ MarkDown.prototype.createToC = function () {
 MarkDown.prototype.createInsUse = function () {
   return `
 ### Installation
-${this.openBox}
-${this.installation ? this.installation : '"npm install" to install dependecies'}
-${this.closeBox}
+${ this.openBox}
+${ this.installation ? this.installation : '"npm install" to install dependecies'}
+${ this.closeBox}
 ### Usage
-${this.openBox}
-${this.usage ? this.usage : '"node index.js" to install to run the program'}
-${this.closeBox}`
+${ this.openBox}
+${ this.usage ? this.usage : '"node index.js" to install to run the program'}
+${ this.closeBox} `
 }
 
-MarkDown.prototype.createLicense = async function () {
+MarkDown.prototype.createLicense = function () {
+  return `
+### License
+${ this.openBox}
+${ this.licName}
+${ this.closeBox}
 
-  const licData = await axios.get(`https://api.github.com/licenses/${this.licenseVal}`);
-  const { data } = await licData;
-  // console.log(name)
-  return data;
-  // return this.licStr
+### Contributing
+Feel free to contribute.
+
+### Questions
+Ask me a question.
+![Github Profile](https://github.com/${this.gitUser}.png?size=200)
+**https://github.com/${this.gitUser}**
+`;
 }
 
 MarkDown.prototype.completeMarkD = function () {
-  return this.createTitleDesc() + this.createToC() + this.createInsUse() + this.createLicense().then(data => {
-    return `
-### License
-#### ${data.name}
-${this.openBox}
-${data.body}
-${this.closeBox}`
-  });
+  const desc = this.createTitleDesc();
+  const toc = this.createToC();
+  const insUse = this.createInsUse();
+  const license = this.createLicense();
+  return desc + toc + insUse + license;
 }
 
 module.exports = MarkDown;
